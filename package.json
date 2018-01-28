@@ -1,0 +1,37 @@
+{
+    "name": "checking",
+    "version": "1.0.0",
+    "description": "",
+    "main": "",
+    "scripts": {
+        "start": "node getfiles.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/RainZhai/checking.git"
+    },
+    "keywords": [
+        "node.js",
+        "checkin"
+    ],
+    "author": "Rain Zhai",
+    "license": "Apache",
+    "bugs": {
+        "url": "https://github.com/RainZhai/checking.git/issues"
+    },
+    "homepage": "https://github.com/RainZhai/checking.git",
+    "devDependencies": {
+        "superagent": "^3.8.2",
+        "nodemailer": "^4.4.2",
+        "later": "^1.2.0",
+        "async": "^2.6.0",
+        "phantomjs-prebuilt": "^2.1.16"
+    },
+    "dependencies": {
+        "superagent": "^3.8.2",
+        "nodemailer": "^4.4.2",
+        "later": "^1.2.0",
+        "async": "^2.6.0",
+        "phantomjs-prebuilt": "^2.1.16"
+    }
+}
