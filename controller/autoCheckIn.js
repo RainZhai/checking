@@ -2,22 +2,28 @@ var request = require('superagent');
 var sendEmail = require('./sendEmail');
 
 var headers = {
-    Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-    Origin: 'http://wap.17wo.cn',
-    'X-FirePHP-Version': '0.0.6',
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like ' +
-            'Gecko) Chrome/40.0.2214.111 Safari/537.36',
-    'Content-Type': 'application/x-www-form-urlencoded',
-    DNT: 1,
-    Referer: 'http://wap.17wo.cn/Login.action',
-    'Accept-Encoding': 'gzip, deflate',
-    'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.6,en;q=0.4,sr;q=0.2'
+    Accept:"application/json, text/javascript, */*; q=0.01",
+    "Accept-Encoding":"gzip, deflate, br",
+    "Accept-Language":"zh-CN,zh;q=0.9,en;q=0.8,zh-TW;q=0.7,ja;q=0.6,la;q=0.5",
+    Host:"passport.suning.com",
+    Origin:"https://passport.suning.com",
+    Referer:"https://passport.suning.com/ids/login?method=GET&loginTheme=b2c",
+    "User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36",
+    "X-Requested-With":"XMLHttpRequest"
 };
-
-var origin = 'http://17wo.cn',
+var headersSign = {
+    Accept:"text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01",
+    "Accept-Encoding":"gzip, deflate, br",
+    "Accept-Language":"zh-CN,zh;q=0.9,en;q=0.8,zh-TW;q=0.7,ja;q=0.6,la;q=0.5",
+    Host:"sign.suning.com",
+    Referer:"https://sign.suning.com/sign/welcome.do",
+    "User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36",
+    "X-Requested-With":"XMLHttpRequest"
+};
+var origin = 'https://passport.suning.com',
     urls = {
-        login: origin + '/Login!process.action',
-        checkIn: origin + '/SignIn.action?checkIn=true'
+        login: origin + '/ids/login',
+        checkIn: 'https://sign.suning.com/sign/doSign.do?dt=test&callback=lotteryDrawCallback'
     };
 
 /**
@@ -42,7 +48,8 @@ AutoCheckIn.prototype = {
     init: function () {
         var that = this;
 
-        that.checkIn(function () {
+        that.checkIn(function (data) {
+            console.log('======', '数据，' + data, '======');
             sendEmail(that.account.user + '，签到完毕。 ' + new Date());
             console.log('======', '签到完毕，' + that.account.user, '======');
         });
@@ -64,13 +71,15 @@ AutoCheckIn.prototype = {
             .set(headers)
             .type('form')
             .send({
-                backurl: null,
-                backurl2: null,
-                chk: null,
-                chkType: 'on',
-                loginType: 0,
-                mobile: that.account.user,
-                password: that.account.password
+                jsonViewType:true,
+                username:that.account.user,
+                password:'',
+                password2:that.account.password,
+                loginTheme:'b2c',
+                service:'',
+                rememberMe:true,
+                client:'app',
+                sceneId:'logonImg',
             })
             .redirects(0) // 防止页面重定向
             .end(function (result) {
@@ -93,7 +102,7 @@ AutoCheckIn.prototype = {
         that._verify(function (cookie) {
             request
                 .get(urls.checkIn)
-                .set(headers)
+                .set(headersSign)
                 .set('Cookie', cookie.value)
                 .end(cb);
         });
